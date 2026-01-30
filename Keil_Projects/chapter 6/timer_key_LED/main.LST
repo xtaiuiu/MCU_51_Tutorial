@@ -1,0 +1,88 @@
+C51 COMPILER V9.57.0.0   MAIN                                                              01/26/2026 13:35:51 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND
+
+line level    source
+
+   1          /*******************************************
+   2          ** 时间控制的LED灯
+   3          ** 功能：用timer 0 控制LED 1 ~ 8 每50ms, 100ms, 150ms等翻转一次
+   4          ** 作用：练习用timer生成系统时钟，并用时间差控制不同的时序，从而控制不同的外设
+   5          ********************************************/
+   6          #include <reg52.h>
+   7          typedef unsigned char u8;
+   8          typedef unsigned int u16;
+   9          
+  10          
+  11          volatile u8 g_ms_tick = 0;  //全局时钟，单位：50 ms
+  12          
+  13          /*
+  14          void delay_10us(u16 ten_us)
+  15          {
+  16                  while(ten_us--);
+  17          }
+  18          */
+  19          
+  20          void timer0_serv(void) interrupt 1  //Timer 0的中断服务函数 （系统时钟）
+  21          {
+  22   1              TH0 = 0x4c;
+  23   1              TL0 = 0x00;
+  24   1              g_ms_tick++;
+  25   1      }
+  26          
+  27          void led_blink(u8 idx, u16 fifty_ms) //控制 LED idx 的翻转， fifty_ms:每隔 fifty_ms 翻转一次
+  28          {
+  29   1              static u16 led_last_tick[] = {0, 0, 0, 0, 0, 0, 0, 0};
+  30   1              u16 diff = g_ms_tick - led_last_tick[idx]; //使用时间差，即使溢出，差值也很大，不会出问题
+  31   1              if(diff >= fifty_ms)
+  32   1                      {
+  33   2                              P2 ^= (1 << idx); // 第idx位取反
+  34   2                              led_last_tick[idx] = g_ms_tick;
+  35   2                      }
+  36   1      }
+  37          
+  38          
+  39          void set_timer0(void)
+  40          {
+  41   1              // Set interrupter
+  42   1              EA = 1;
+  43   1              ET0 = 1;
+  44   1              // Set timer mode
+  45   1              TMOD |= 0x01;
+  46   1              //Set initial value for the timer
+  47   1              TH0 = 0x4c;
+  48   1              TL0 = 0x00;
+  49   1              TR0 = 1;  //开启Timer 0
+  50   1      }
+  51          
+  52          void main(void)
+  53          { 
+  54   1              set_timer0();
+  55   1              while (1)
+C51 COMPILER V9.57.0.0   MAIN                                                              01/26/2026 13:35:51 PAGE 2   
+
+  56   1              {
+  57   2                      u8 i = 0;
+  58   2                      for(i = 0; i < 8; i++)
+  59   2                      {
+  60   3                              led_blink(i, (i+1)*10);
+  61   3                      }
+  62   2              }
+  63   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    124    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     17       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

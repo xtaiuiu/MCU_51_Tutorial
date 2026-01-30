@@ -1,0 +1,3 @@
+".\Objects\main_better.obj" 
+TO ".\Objects\UART_test" 
+PRINT(".\Listings\UART_test.m51") RAMSIZE(256) 

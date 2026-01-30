@@ -1,0 +1,165 @@
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    01/27/2026  11:49:11  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
+D:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main_better.obj TO .\Objects\UART_test PRINT (.\Listings\UART_test.m51) RAMSIZE (2
+>> 56)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main_better.obj (MAIN_BETTER)
+  D:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
+  D:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\UART_test (MAIN_BETTER)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+                    0008H     0018H                  *** GAP ***
+            BIT     0020H.0   0000H.1   UNIT         ?BI?MAIN_BETTER
+                    0020H.1   0000H.7                *** GAP ***
+            DATA    0021H     0024H     UNIT         ?DT?MAIN_BETTER
+            IDATA   0045H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0020H                  *** GAP ***
+            CODE    0023H     0003H     ABSOLUTE     
+                    0026H     07DAH                  *** GAP ***
+            CODE    0800H     008CH     UNIT         ?C_C51STARTUP
+            CODE    088CH     0047H     UNIT         ?PR?UART_ISR?MAIN_BETTER
+            CODE    08D3H     0040H     UNIT         ?PR?MAIN?MAIN_BETTER
+            CODE    0913H     0017H     UNIT         ?PR?_UART_INIT?MAIN_BETTER
+            CODE    092AH     000FH     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\UART_test (MAIN_BETTER)
+
+
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?C_C51STARTUP
+  +--> ?PR?MAIN?MAIN_BETTER
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN_BETTER
+  +--> ?PR?_UART_INIT?MAIN_BETTER
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\UART_test (MAIN_BETTER)
+
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  01/27/2026  11:49:11  PAGE 2
+
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN_BETTER
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  D:00B0H         PUBLIC        P3
+  B:00A8H.7       PUBLIC        EA
+  D:0021H         PUBLIC        rx_buf
+  D:0031H         PUBLIC        tx_buf
+  D:00A8H         PUBLIC        IE
+  B:0020H.0       PUBLIC        tx_busy
+  B:00A8H.4       PUBLIC        ES
+  D:00B8H         PUBLIC        IP
+  B:0098H.0       PUBLIC        RI
+  B:0098H.1       PUBLIC        TI
+  C:08D3H         PUBLIC        main
+  D:0099H         PUBLIC        SBUF
+  D:0087H         PUBLIC        PCON
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  D:0088H         PUBLIC        TCON
+  D:008DH         PUBLIC        TH1
+  D:008BH         PUBLIC        TL1
+  C:0913H         PUBLIC        _uart_init
+  B:0088H.6       PUBLIC        TR1
+  D:0041H         PUBLIC        rx_head
+  D:0042H         PUBLIC        tx_head
+  D:00C8H         PUBLIC        T2CON
+  C:088CH         PUBLIC        uart_isr
+  D:0043H         PUBLIC        rx_tail
+  D:0044H         PUBLIC        tx_tail
+  D:00D0H         PUBLIC        PSW
+  -------         PROC          _UART_INIT
+  D:0007H         SYMBOL        baud
+  C:0913H         LINE#         20
+  C:0913H         LINE#         21
+  C:0913H         LINE#         22
+  C:0916H         LINE#         23
+  C:0919H         LINE#         24
+  C:091CH         LINE#         25
+  C:091FH         LINE#         27
+  C:0921H         LINE#         28
+  C:0923H         LINE#         30
+  C:0925H         LINE#         31
+  C:0927H         LINE#         32
+  C:0929H         LINE#         33
+  -------         ENDPROC       _UART_INIT
+  -------         PROC          UART_ISR
+  C:088CH         LINE#         36
+  C:0897H         LINE#         39
+  C:089AH         LINE#         40
+  C:089AH         LINE#         41
+  C:089CH         LINE#         42
+  C:08A4H         LINE#         43
+  C:08ABH         LINE#         44
+  C:08ABH         LINE#         47
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  01/27/2026  11:49:11  PAGE 3
+
+
+  C:08AEH         LINE#         48
+  C:08AEH         LINE#         49
+  C:08B0H         LINE#         50
+  C:08B6H         LINE#         51
+  C:08B6H         LINE#         52
+  C:08BFH         LINE#         53
+  C:08C6H         LINE#         54
+  C:08C8H         LINE#         56
+  C:08C8H         LINE#         57
+  C:08CAH         LINE#         58
+  C:08CAH         LINE#         59
+  C:08CAH         LINE#         60
+  -------         ENDPROC       UART_ISR
+  -------         PROC          MAIN
+  C:08D3H         LINE#         63
+  C:08D3H         LINE#         64
+  C:08D3H         LINE#         66
+  C:08D8H         LINE#         68
+  C:08D8H         LINE#         69
+  C:08D8H         LINE#         71
+  C:08DEH         LINE#         72
+  C:08DEH         LINE#         73
+  C:08EEH         LINE#         74
+  C:08F5H         LINE#         75
+  C:08FCH         LINE#         77
+  C:08FFH         LINE#         78
+  C:08FFH         LINE#         79
+  C:0901H         LINE#         80
+  C:090AH         LINE#         81
+  C:0911H         LINE#         82
+  C:0911H         LINE#         83
+  C:0911H         LINE#         84
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN_BETTER
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00AFH BYTE ( 8%) *
+******************************************************************************
+
+Program Size: data=45.1 xdata=0 code=319
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

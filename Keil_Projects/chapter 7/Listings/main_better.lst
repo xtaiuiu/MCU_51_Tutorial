@@ -1,0 +1,111 @@
+C51 COMPILER V9.57.0.0   MAIN_BETTER                                                       01/27/2026 11:49:11 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE MAIN_BETTER
+OBJECT MODULE PLACED IN .\Objects\main_better.obj
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE main_better.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listin
+                    -gs\main_better.lst) OBJECT(.\Objects\main_better.obj)
+
+line level    source
+
+   1          #include "reg52.h"
+   2          
+   3          typedef unsigned char u8;
+   4          
+   5          /* ================= 接收缓冲区 ================= */
+   6          #define RX_BUF_SIZE 16
+   7          volatile u8 rx_buf[RX_BUF_SIZE];
+   8          volatile u8 rx_head = 0;
+   9          volatile u8 rx_tail = 0;
+  10          
+  11          /* ================= 发送缓冲区 ================= */
+  12          #define TX_BUF_SIZE 16
+  13          volatile u8 tx_buf[TX_BUF_SIZE];
+  14          volatile u8 tx_head = 0;
+  15          volatile u8 tx_tail = 0;
+  16          
+  17          volatile bit tx_busy = 0;
+  18          
+  19          /* ================= 串口初始化 ================= */
+  20          void uart_init(u8 baud)
+  21          {
+  22   1          TMOD &= 0x0F;
+  23   1          TMOD |= 0x20;      // Timer1 模式2
+  24   1          SCON  = 0x50;      // 串口模式1，允许接收
+  25   1          PCON |= 0x80;      // 波特率加倍
+  26   1      
+  27   1          TH1 = baud;
+  28   1          TL1 = baud;
+  29   1      
+  30   1          ES = 1;
+  31   1          EA = 1;
+  32   1          TR1 = 1;
+  33   1      }
+  34          
+  35          /* ================= 串口中断 ================= */
+  36          void uart_isr(void) interrupt 4
+  37          {
+  38   1          /* 接收 */
+  39   1          if (RI)
+  40   1          {
+  41   2              RI = 0;
+  42   2              rx_buf[rx_head] = SBUF;
+  43   2              rx_head = (rx_head + 1) % RX_BUF_SIZE;
+  44   2          }
+  45   1      
+  46   1          /* 发送完成 */
+  47   1          if (TI)
+  48   1          {
+  49   2              TI = 0;
+  50   2              if (tx_tail != tx_head)
+  51   2              {
+  52   3                  SBUF = tx_buf[tx_tail];
+  53   3                  tx_tail = (tx_tail + 1) % TX_BUF_SIZE;
+  54   3              }
+C51 COMPILER V9.57.0.0   MAIN_BETTER                                                       01/27/2026 11:49:11 PAGE 2   
+
+  55   2              else
+  56   2              {
+  57   3                  tx_busy = 0;   // 真正空闲
+  58   3              }
+  59   2          }
+  60   1      }
+  61          
+  62          /* ================= 主函数 ================= */
+  63          void main(void)
+  64          {
+  65   1          //uart_init(0xFA);   // 11.0592MHz ≈ 9600bps
+  66   1              uart_init(0xFD);   // 11.0592MHz ≈ 19200bps
+  67   1      
+  68   1          while (1)
+  69   1          {
+  70   2              /* 回显：RX → TX */
+  71   2              if (rx_tail != rx_head)
+  72   2              {
+  73   3                  tx_buf[tx_head] = rx_buf[rx_tail];
+  74   3                  tx_head = (tx_head + 1) % TX_BUF_SIZE;
+  75   3                  rx_tail = (rx_tail + 1) % RX_BUF_SIZE;
+  76   3      
+  77   3                  if (!tx_busy)
+  78   3                  {
+  79   4                      tx_busy = 1;
+  80   4                      SBUF = tx_buf[tx_tail];
+  81   4                      tx_tail = (tx_tail + 1) % TX_BUF_SIZE;
+  82   4                  }
+  83   3              }
+  84   2          }
+  85   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    158    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     36    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

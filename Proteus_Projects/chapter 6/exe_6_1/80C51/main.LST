@@ -1,0 +1,81 @@
+C51 COMPILER V9.56.0.0   MAIN                                                              07/06/2022 20:36:28 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN main.OBJ
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.exe ..\main.c ROM(SMALL) BROWSE DEBUG CODE OBJECTEXTEND PREPRINT OBJECT(main
+                    -.OBJ)
+
+line level    source
+
+   1          //实例6.1定时方式1应用（中断）
+   2          
+   3          #include <reg51.h>
+   4          sbit P2_0=P2^0;
+   5          void timer0 (void) interrupt 1 {
+   6   1              P2_0 = !P2_0;           //P1.0取反
+   7   1              TH0 = 0xfc;                     //计数初值重装载
+   8   1              TL0 = 0x18;
+   9   1      }
+  10          void main (void) {
+  11   1              TMOD = 0x01;                    //T0定时方式1
+  12   1              P2_0=0;
+  13   1              TH0=0xfc;                       //预置计数初值
+  14   1              TL0=0x18;
+  15   1              EA=1; 
+  16   1              ET0=1; 
+  17   1              TR0=1;
+  18   1              do { } while (1);
+  19   1      }
+C51 COMPILER V9.56.0.0   MAIN                                                              07/06/2022 20:36:28 PAGE 2   
+
+ASSEMBLY LISTING OF GENERATED OBJECT CODE
+
+
+             ; FUNCTION timer0 (BEGIN)
+                                           ; SOURCE LINE # 5
+                                           ; SOURCE LINE # 6
+0000 B2A0              CPL     P2_0
+                                           ; SOURCE LINE # 7
+0002 758CFC            MOV     TH0,#0FCH
+                                           ; SOURCE LINE # 8
+0005 758A18            MOV     TL0,#018H
+                                           ; SOURCE LINE # 9
+0008 32                RETI    
+             ; FUNCTION timer0 (END)
+
+             ; FUNCTION main (BEGIN)
+                                           ; SOURCE LINE # 10
+                                           ; SOURCE LINE # 11
+0000 758901            MOV     TMOD,#01H
+                                           ; SOURCE LINE # 12
+0003 C2A0              CLR     P2_0
+                                           ; SOURCE LINE # 13
+0005 758CFC            MOV     TH0,#0FCH
+                                           ; SOURCE LINE # 14
+0008 758A18            MOV     TL0,#018H
+                                           ; SOURCE LINE # 15
+000B D2AF              SETB    EA
+                                           ; SOURCE LINE # 16
+000D D2A9              SETB    ET0
+                                           ; SOURCE LINE # 17
+000F D28C              SETB    TR0
+                                           ; SOURCE LINE # 18
+0011         ?C0002:
+0011 80FE              SJMP    ?C0002
+             ; FUNCTION main (END)
+
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     28    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,31 @@
+C51 COMPILER V9.57.0.0   MAIN_TIMER_BASED                                                  01/23/2026 17:31:47 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE MAIN_TIMER_BASED
+OBJECT MODULE PLACED IN .\Objects\main_timer_based.obj
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE main_timer_based.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\L
+                    -istings\main_timer_based.lst) OBJECT(.\Objects\main_timer_based.obj)
+
+line level    source
+
+   1          #include "reg52.h"
+   2          typedef unsigned int u16;
+   3          typedef unsigned char u8;
+   4          
+   5          sbit LED1 = P2^0;
+   6          sbit LED2 = P2^1;
+   7          sbit BEEP = P2^5;
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   ----    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,128 @@
+C51 COMPILER V9.57.0.0   MAIN_INVERSE_EXAMPLE                                              01/23/2026 21:40:07 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE MAIN_INVERSE_EXAMPLE
+OBJECT MODULE PLACED IN .\Objects\main_inverse_example.obj
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE main_inverse_example.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT
+                    -(.\Listings\main_inverse_example.lst) OBJECT(.\Objects\main_inverse_example.obj)
+
+line level    source
+
+   1          #include "reg52.h"
+   2          typedef unsigned int u16;
+   3          typedef unsigned char u8;
+   4          
+   5          sbit LED1 = P2^0;
+   6          sbit LED2 = P2^1;
+   7          sbit BEEP = P2^5;
+   8          sbit KEY  = P3^2;
+   9          
+  10          u16 g_beep_cnt = 0;
+  11          u16 g_led1_cnt = 0;  //为LED1 统计经过了多少个100us，当该值达到5000时，LED1 闪烁并重置该值
+  12          bit g_beep_ctl = 1;
+  13          bit key_flag = 0;  // key 是否按下的 flag
+  14          u16 g_key_cnt = 0;  // key 消抖时延计数，单位100us.
+  15          
+  16          void delay_10us(u16 ten_us) // 当传入 ten_us = 1时，大约延时 10 us.
+  17          {
+  18   1              while(ten_us--);
+  19   1      }
+  20          
+  21          
+  22          //采用定时器实现，要求：只使用T0一个计时器
+  23          
+  24          void timer0_serv(void) interrupt 1
+  25          {
+  26   1              /****************************************
+  27   1              *** 蜂鸣器控制
+  28   1              ****************************************/
+  29   1              if(1 == g_beep_ctl)
+  30   1              {
+  31   2                      BEEP = ~BEEP;  //每隔 100us 蜂鸣器电平翻转一次，即可发出频率为5000的音频
+  32   2                      if(++g_beep_cnt > 60000)
+  33   2                      {
+  34   3                              BEEP = 0; // 关闭蜂鸣器
+  35   3                              g_beep_ctl = 0; // 时间到，停止蜂鸣器。下次进入此中断服务程序后，BEEP相关逻辑均失效（即不再响应）
+  36   3                              //TH0 = 0x3c; TL0 = 0xb0; //装入 LED1 闪烁 Timer的初值
+  37   3                      }
+  38   2              }
+  39   1              /****************************************
+  40   1              *** LED1 闪烁控制
+  41   1              ****************************************/
+  42   1              if(++g_led1_cnt >= 5000)
+  43   1              {
+  44   2                      LED1 = ~LED1;
+  45   2                      g_led1_cnt = 0;
+  46   2              }
+  47   1              /****************************************
+  48   1              *** 按键控制 LED2。 先消抖，再闪烁LED2
+  49   1              ****************************************/
+  50   1              if(key_flag)
+  51   1              {
+  52   2                      if(KEY == 0)
+  53   2                      {
+  54   3                              if(++g_key_cnt >= 20)
+C51 COMPILER V9.57.0.0   MAIN_INVERSE_EXAMPLE                                              01/23/2026 21:40:07 PAGE 2   
+
+  55   3                              {
+  56   4                                      LED2 = ~LED2;
+  57   4                                      
+  58   4                                      /*****************************************
+  59   4                                      * 关键：处理完一次就清。如果不清，下次Timer溢出后（可能很快溢出，此时还按着键），LED会再翻转一次
+  60   4                                      * 时间快的话会看不清楚LED的状态有没有被翻转
+  61   4                                      *****************************************/
+  62   4                                      g_key_cnt = 0;
+  63   4                                      key_flag  = 0;   
+  64   4                              }
+  65   3                      }
+  66   2                      else
+  67   2                      {
+  68   3                              g_key_cnt = 0;
+  69   3                              key_flag = 0;
+  70   3                      }
+  71   2              }
+  72   1              
+  73   1              
+  74   1              TH0 = 0xff; TL0 = 0x9c; //重装 Timer0 初值（Timer溢出后，不会重装初值，只会重置溢出位）
+  75   1      }       
+  76          
+  77          void int0_serv(void) interrupt 0
+  78          {
+  79   1              /****************************************
+  80   1              *** 按键控制 LED2, 当P3^2处的按键按下时，将按键标志置1
+  81   1              *** 此处只设置标志位，不放置其他逻辑。消抖和LED2闪烁放在Timer 0的中断服务函数中
+  82   1              ****************************************/
+  83   1              key_flag = 1;  // 按键“疑似”被按下
+  84   1              delay_10us(50000);
+  85   1      }
+  86          
+  87          void main(void)
+  88          {
+  89   1              //u8 key;
+  90   1              EA = 1;
+  91   1              ET0 = 1; //允许定时器中断
+  92   1              EX0 = 1; //允许外部中断0中断
+  93   1              IT0 = 1; //下降沿触发，避免按键长时间按下后一直触发此中断
+  94   1              TMOD = 0x01;  // Timer 0 采用 16位定时器模式（方式1）
+  95   1              TH0 = 0xff;
+  96   1              TL0 = 0x9c;
+  97   1              TR0 = 1; // Timer 0 启动
+  98   1              while(1)
+  99   1              {
+ 100   2                      delay_10us(50000);
+ 101   2              }
+ 102   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    229    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      6    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      2    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,3 @@
+".\Objects\main_correct.obj" 
+TO ".\Objects\LED_timer" 
+PRINT(".\Listings\LED_timer.m51") RAMSIZE(256) 
