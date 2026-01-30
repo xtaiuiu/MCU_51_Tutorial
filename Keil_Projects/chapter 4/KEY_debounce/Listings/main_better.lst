@@ -1,0 +1,122 @@
+C51 COMPILER V9.57.0.0   MAIN_BETTER                                                       01/30/2026 10:54:56 PAGE 1   
+
+
+C51 COMPILER V9.57.0.0, COMPILATION OF MODULE MAIN_BETTER
+OBJECT MODULE PLACED IN .\Objects\main_better.obj
+COMPILER INVOKED BY: d:\Keil_v5\C51\BIN\C51.EXE main_better.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listin
+                    -gs\main_better.lst) OBJECT(.\Objects\main_better.obj)
+
+line level    source
+
+   1          #include "reg52.h"
+   2          sbit key = P3^2;  //接INT0
+   3          sbit led = P2^0;
+   4          
+   5          typedef enum
+   6          {
+   7                  KEY_STATE_IDL,                          // 等待按键
+   8                  KEY_STATE_PRESS_DEBOUNCE,                       // 按键消抖
+   9                  KEY_STATE_WAIT_RELEASE,         // 等待按键释放
+  10                  KEY_STATE_RELEASE_DEBOUNCE,                     // 释放消抖
+  11          }t_key_state;
+  12          typedef unsigned char   u8;
+  13          typedef unsigned int    u16;
+  14          
+  15          volatile t_key_state key_state = KEY_STATE_IDL;
+  16          
+  17          
+  18          
+  19          /* ================= 系统时钟 ================= */
+  20          volatile u16 g_sys_tick = 0; // 系统时钟，单位：50ms
+  21          /* =============== Timer0 中断 =============== */
+  22          void timer0_isr(void) interrupt 1
+  23          {
+  24   1              TH0 = 0xDC; // （11.0592MHz）1ms, 10ms, 50ms时，重装值分别为0xFC66， 0xDC00，0x4C00
+  25   1              TL0 = 0x00;
+  26   1              g_sys_tick++; // 系统时间前进一步
+  27   1      }
+  28          
+  29          void key_detect(void)
+  30          {
+  31   1              static u16 debounce_press_last_tick = 0;
+  32   1              static u16 debounce_release_last_tick = 0;
+  33   1              switch(key_state)
+  34   1              {
+  35   2                      case KEY_STATE_IDL: 
+  36   2                              if(key == 0)
+  37   2                              {       debounce_press_last_tick = g_sys_tick;  //记录消抖开始时间
+  38   3                                      key_state = KEY_STATE_PRESS_DEBOUNCE;
+  39   3                              }
+  40   2                              break;
+  41   2                      case KEY_STATE_PRESS_DEBOUNCE:
+  42   2                              if(g_sys_tick - debounce_press_last_tick >= 1)
+  43   2                              {
+  44   3                                      debounce_press_last_tick = g_sys_tick;
+  45   3                                      if(key == 0)
+  46   3                                      {
+  47   4                                              key_state = KEY_STATE_WAIT_RELEASE;
+  48   4                                              led = 0;  //按键后，LED亮
+  49   4                                      }
+  50   3                                      else
+  51   3                                              key_state = KEY_STATE_IDL;
+  52   3                              }                               
+  53   2                              break;
+  54   2                      case KEY_STATE_WAIT_RELEASE:
+C51 COMPILER V9.57.0.0   MAIN_BETTER                                                       01/30/2026 10:54:56 PAGE 2   
+
+  55   2                              if(key == 1)
+  56   2                              {
+  57   3                                      debounce_release_last_tick = g_sys_tick; //记录释放消抖开始时间
+  58   3                                      key_state = KEY_STATE_RELEASE_DEBOUNCE;
+  59   3                              }
+  60   2                              break;
+  61   2                      case KEY_STATE_RELEASE_DEBOUNCE:
+  62   2                              if(g_sys_tick - debounce_release_last_tick >= 1)
+  63   2                              {
+  64   3                                      debounce_release_last_tick = g_sys_tick;
+  65   3                                      if(key == 1)
+  66   3                                      {
+  67   4                                              key_state = KEY_STATE_IDL;
+  68   4                                              led = 1;  //按键释放后，LED灭
+  69   4                                      }
+  70   3                                      else
+  71   3                                              key_state = KEY_STATE_WAIT_RELEASE;
+  72   3                              }
+  73   2                              break;
+  74   2              }
+  75   1      }
+  76          
+  77          void init_timer0(void)
+  78          {
+  79   1              TMOD &= 0xF0;   // 清 Timer0 控制位
+  80   1              TMOD |= 0x01;   // Timer0 工作方式 1（16 位）
+  81   1              TH0 = 0xDC;
+  82   1              TL0 = 0x00;
+  83   1              ET0 = 1;        // 允许 Timer0 中断
+  84   1              EA  = 1;        // 开总中断
+  85   1              TR0 = 1;        // 启动 Timer0
+  86   1              EX0 = 1;  // 使能中断0
+  87   1      }
+  88          
+  89          void main(void)
+  90          {
+  91   1              init_timer0();
+  92   1              while(1)
+  93   1              {
+  94   2                      key_detect();
+  95   2              }
+  96   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    167    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      7    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,13 +1,13 @@
 #include "reg52.h"
-//#include "intrins.h"
 sbit key = P3^2;  //接INT0
 sbit led = P2^0;
 
 typedef enum
 {
 	KEY_STATE_IDL,				// 等待按键
-	KEY_STATE_DEBOUNCE,			// 按键消抖
+	KEY_STATE_PRESS_DEBOUNCE,			// 按键消抖
 	KEY_STATE_WAIT_RELEASE,		// 等待按键释放
+	KEY_STATE_RELEASE_DEBOUNCE,			// 释放消抖
 }t_key_state;
 typedef unsigned char	u8;
 typedef unsigned int	u16;
@@ -17,7 +17,7 @@ volatile t_key_state key_state = KEY_STATE_IDL;
 
 
 /* ================= 系统时钟 ================= */
-volatile u16 g_sys_tick = 0; // 系统时钟，单位：50ms
+volatile u16 g_sys_tick = 0; // 系统时钟，单位：10ms
 /* =============== Timer0 中断 =============== */
 void timer0_isr(void) interrupt 1
 {
@@ -26,21 +26,21 @@ void timer0_isr(void) interrupt 1
 	g_sys_tick++; // 系统时间前进一步
 }
 
-void key_detect(void)
+void key_scan_with_debounce(void)
 {
-	static u16 debounce_last_tick = 0;
+	static u16 debounce_last_tick = 0;  //一个按键同一时刻只可能处于按键消抖或释放消抖之一，因此只需要一个tick即可。
 	switch(key_state)
 	{
 		case KEY_STATE_IDL: 
 			if(key == 0)
-			{	debounce_last_tick = g_sys_tick;  //记录消抖开始时间
-				key_state = KEY_STATE_DEBOUNCE;
+			{	debounce_press_last_tick = g_sys_tick;  //记录消抖开始时间
+				key_state = KEY_STATE_PRESS_DEBOUNCE;
 			}
 			break;
-		case KEY_STATE_DEBOUNCE:
-			if(g_sys_tick - debounce_last_tick >= 1)
+		case KEY_STATE_PRESS_DEBOUNCE:
+			if(g_sys_tick - debounce_press_last_tick >= 1)
 			{
-				debounce_last_tick = g_sys_tick;
+				debounce_press_last_tick = g_sys_tick;
 				if(key == 0)
 				{
 					key_state = KEY_STATE_WAIT_RELEASE;
@@ -53,8 +53,21 @@ void key_detect(void)
 		case KEY_STATE_WAIT_RELEASE:
 			if(key == 1)
 			{
-				key_state = KEY_STATE_IDL;
-				led = 1;  //按键释放后，LED灭
+				debounce_release_last_tick = g_sys_tick; //记录释放消抖开始时间
+				key_state = KEY_STATE_RELEASE_DEBOUNCE;
+			}
+			break;
+		case KEY_STATE_RELEASE_DEBOUNCE:
+			if(g_sys_tick - debounce_release_last_tick >= 1)
+			{
+				debounce_release_last_tick = g_sys_tick;
+				if(key == 1)
+				{
+					key_state = KEY_STATE_IDL;
+					led = 1;  //按键释放后，LED灭
+				}
+				else
+					key_state = KEY_STATE_WAIT_RELEASE;
 			}
 			break;
 	}
@@ -77,6 +90,6 @@ void main(void)
 	init_timer0();
 	while(1)
 	{
-		key_detect();
+		key_scan_with_debounce();
 	}
 }

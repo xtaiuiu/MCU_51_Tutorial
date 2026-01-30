@@ -1,21 +1,21 @@
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    01/26/2026  20:04:43  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                    01/30/2026  10:55:13  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22.2.0, INVOKED BY:
-D:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main.obj TO .\Objects\KEY_debounce PRINT (.\Listings\KEY_debounce.m51) RAMSIZE (25
->> 6)
+D:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main_better.obj TO .\Objects\KEY_debounce PRINT (.\Listings\KEY_debounce.m51) RAMS
+>> IZE (256)
 
 
 MEMORY MODEL: SMALL
 
 
 INPUT MODULES INCLUDED:
-  .\Objects\main.obj (MAIN)
+  .\Objects\main_better.obj (MAIN_BETTER)
   D:\KEIL_V5\C51\LIB\C51S.LIB (?C_STARTUP)
   D:\KEIL_V5\C51\LIB\C51S.LIB (?C_INIT)
 
 
-LINK MAP OF MODULE:  .\Objects\KEY_debounce (MAIN)
+LINK MAP OF MODULE:  .\Objects\KEY_debounce (MAIN_BETTER)
 
 
             TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
@@ -23,8 +23,8 @@ LINK MAP OF MODULE:  .\Objects\KEY_debounce (MAIN)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     0005H     UNIT         ?DT?MAIN
-            IDATA   000DH     0001H     UNIT         ?STACK
+            DATA    0008H     0007H     UNIT         ?DT?MAIN_BETTER
+            IDATA   000FH     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
@@ -32,137 +32,150 @@ LINK MAP OF MODULE:  .\Objects\KEY_debounce (MAIN)
             CODE    000BH     0003H     ABSOLUTE     
                     000EH     07F2H                  *** GAP ***
             CODE    0800H     008CH     UNIT         ?C_C51STARTUP
-            CODE    088CH     0049H     UNIT         ?PR?KEY_DETECT?MAIN
-            CODE    08D5H     0015H     UNIT         ?PR?INIT_TIMER0?MAIN
-            CODE    08EAH     0013H     UNIT         ?PR?TIMER0_ISR?MAIN
-            CODE    08FDH     000CH     UNIT         ?C_INITSEG
-            CODE    0909H     0008H     UNIT         ?PR?MAIN?MAIN
+            CODE    088CH     0077H     UNIT         ?PR?KEY_DETECT?MAIN_BETTER
+            CODE    0903H     0015H     UNIT         ?PR?INIT_TIMER0?MAIN_BETTER
+            CODE    0918H     0013H     UNIT         ?PR?TIMER0_ISR?MAIN_BETTER
+            CODE    092BH     0010H     UNIT         ?C_INITSEG
+            CODE    093BH     0008H     UNIT         ?PR?MAIN?MAIN_BETTER
 
 
 
-OVERLAY MAP OF MODULE:   .\Objects\KEY_debounce (MAIN)
+OVERLAY MAP OF MODULE:   .\Objects\KEY_debounce (MAIN_BETTER)
 
 
 SEGMENT
   +--> CALLED SEGMENT
 ---------------------
 ?C_C51STARTUP
-  +--> ?PR?MAIN?MAIN
+  +--> ?PR?MAIN?MAIN_BETTER
   +--> ?C_INITSEG
 
-?PR?MAIN?MAIN
-  +--> ?PR?INIT_TIMER0?MAIN
-  +--> ?PR?KEY_DETECT?MAIN
+?PR?MAIN?MAIN_BETTER
+  +--> ?PR?INIT_TIMER0?MAIN_BETTER
+  +--> ?PR?KEY_DETECT?MAIN_BETTER
 
 
 
-SYMBOL TABLE OF MODULE:  .\Objects\KEY_debounce (MAIN)
+SYMBOL TABLE OF MODULE:  .\Objects\KEY_debounce (MAIN_BETTER)
 
   VALUE           TYPE          NAME
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  01/26/2026  20:04:43  PAGE 2
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  01/30/2026  10:55:13  PAGE 2
 
 
   ----------------------------------
 
-  -------         MODULE        MAIN
+  -------         MODULE        MAIN_BETTER
   C:0000H         SYMBOL        _ICE_DUMMY_
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   D:00B0H         PUBLIC        P3
-  C:08EAH         PUBLIC        timer0_isr
+  C:0918H         PUBLIC        timer0_isr
   B:00A8H.7       PUBLIC        EA
   D:00A8H         PUBLIC        IE
   D:00B8H         PUBLIC        IP
-  C:0909H         PUBLIC        main
+  C:093BH         PUBLIC        main
   C:088CH         PUBLIC        key_detect
   D:0098H         PUBLIC        SCON
   D:0089H         PUBLIC        TMOD
   D:0088H         PUBLIC        TCON
-  D:000AH         PUBLIC        g_sys_tick
+  D:000CH         PUBLIC        g_sys_tick
   B:00A0H.0       PUBLIC        led
   B:00A8H.1       PUBLIC        ET0
   B:00B0H.2       PUBLIC        key
   D:008CH         PUBLIC        TH0
   B:00A8H.0       PUBLIC        EX0
-  D:000CH         PUBLIC        key_state
+  D:000EH         PUBLIC        key_state
   D:008AH         PUBLIC        TL0
   B:0088H.4       PUBLIC        TR0
   D:00C8H         PUBLIC        T2CON
-  C:08D5H         PUBLIC        init_timer0
+  C:0903H         PUBLIC        init_timer0
   D:00D0H         PUBLIC        PSW
   -------         PROC          TIMER0_ISR
-  C:08EAH         LINE#         22
-  C:08ECH         LINE#         24
-  C:08EFH         LINE#         25
-  C:08F2H         LINE#         26
-  C:08FAH         LINE#         27
+  C:0918H         LINE#         22
+  C:091AH         LINE#         24
+  C:091DH         LINE#         25
+  C:0920H         LINE#         26
+  C:0928H         LINE#         27
   -------         ENDPROC       TIMER0_ISR
   -------         PROC          KEY_DETECT
   -------         DO            
-  D:0008H         SYMBOL        debounce_last_tick
+  D:0008H         SYMBOL        debounce_press_last_tick
+  D:000AH         SYMBOL        debounce_release_last_tick
   -------         ENDDO         
   C:088CH         LINE#         29
   C:088CH         LINE#         30
-  C:088CH         LINE#         32
-  C:0898H         LINE#         33
-  C:0898H         LINE#         34
-  C:0898H         LINE#         35
+  C:088CH         LINE#         33
+  C:089BH         LINE#         34
+  C:089BH         LINE#         35
   C:089BH         LINE#         36
-  C:08A1H         LINE#         37
+  C:089EH         LINE#         37
   C:08A4H         LINE#         38
-  C:08A4H         LINE#         39
-  C:08A5H         LINE#         40
-  C:08A5H         LINE#         41
-  C:08B9H         LINE#         42
-  C:08B9H         LINE#         43
-  C:08BFH         LINE#         44
+  C:08A7H         LINE#         39
+  C:08A7H         LINE#         40
+  C:08A8H         LINE#         41
+  C:08A8H         LINE#         42
+  C:08BCH         LINE#         43
+  C:08BCH         LINE#         44
   C:08C2H         LINE#         45
-  C:08C2H         LINE#         46
+  C:08C5H         LINE#         46
   C:08C5H         LINE#         47
-BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  01/26/2026  20:04:43  PAGE 3
+BL51 BANKED LINKER/LOCATER V6.22.2.0                                                  01/30/2026  10:55:13  PAGE 3
 
 
-  C:08C7H         LINE#         48
-  C:08C8H         LINE#         50
+  C:08C8H         LINE#         48
+  C:08CAH         LINE#         49
   C:08CBH         LINE#         51
-  C:08CBH         LINE#         52
-  C:08CCH         LINE#         53
-  C:08CCH         LINE#         54
+  C:08CEH         LINE#         52
+  C:08CEH         LINE#         53
+  C:08CFH         LINE#         54
   C:08CFH         LINE#         55
-  C:08CFH         LINE#         56
+  C:08D2H         LINE#         56
   C:08D2H         LINE#         57
-  C:08D4H         LINE#         58
-  C:08D4H         LINE#         59
-  C:08D4H         LINE#         60
-  C:08D4H         LINE#         61
+  C:08D8H         LINE#         58
+  C:08DBH         LINE#         59
+  C:08DBH         LINE#         60
+  C:08DCH         LINE#         61
+  C:08DCH         LINE#         62
+  C:08F0H         LINE#         63
+  C:08F0H         LINE#         64
+  C:08F6H         LINE#         65
+  C:08F9H         LINE#         66
+  C:08F9H         LINE#         67
+  C:08FCH         LINE#         68
+  C:08FEH         LINE#         69
+  C:08FFH         LINE#         71
+  C:0902H         LINE#         72
+  C:0902H         LINE#         73
+  C:0902H         LINE#         74
+  C:0902H         LINE#         75
   -------         ENDPROC       KEY_DETECT
   -------         PROC          INIT_TIMER0
-  C:08D5H         LINE#         63
-  C:08D5H         LINE#         64
-  C:08D5H         LINE#         65
-  C:08D8H         LINE#         66
-  C:08DBH         LINE#         67
-  C:08DEH         LINE#         68
-  C:08E1H         LINE#         69
-  C:08E3H         LINE#         70
-  C:08E5H         LINE#         71
-  C:08E7H         LINE#         72
-  C:08E9H         LINE#         73
+  C:0903H         LINE#         77
+  C:0903H         LINE#         78
+  C:0903H         LINE#         79
+  C:0906H         LINE#         80
+  C:0909H         LINE#         81
+  C:090CH         LINE#         82
+  C:090FH         LINE#         83
+  C:0911H         LINE#         84
+  C:0913H         LINE#         85
+  C:0915H         LINE#         86
+  C:0917H         LINE#         87
   -------         ENDPROC       INIT_TIMER0
   -------         PROC          MAIN
-  C:0909H         LINE#         75
-  C:0909H         LINE#         76
-  C:0909H         LINE#         77
-  C:090CH         LINE#         78
-  C:090CH         LINE#         79
-  C:090CH         LINE#         80
-  C:090FH         LINE#         81
+  C:093BH         LINE#         89
+  C:093BH         LINE#         90
+  C:093BH         LINE#         91
+  C:093EH         LINE#         92
+  C:093EH         LINE#         93
+  C:093EH         LINE#         94
+  C:0941H         LINE#         95
   -------         ENDPROC       MAIN
-  -------         ENDMOD        MAIN
+  -------         ENDMOD        MAIN_BETTER
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0087H BYTE ( 6%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 00B9H BYTE ( 9%) *
 ******************************************************************************
 
-Program Size: data=14.0 xdata=0 code=279
+Program Size: data=16.0 xdata=0 code=329
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
